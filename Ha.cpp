@@ -11,6 +11,12 @@ public:
 	Uzel() {
 		left = right = NULL;
 	}
+	Uzel(Uzel* L, Uzel* R)
+	{
+		left = L;
+		right = R;
+		a = L->a + R->a;
+	}
 };
 
 
