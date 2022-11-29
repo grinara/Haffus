@@ -25,6 +25,8 @@ struct MyCompare
 {
 	bool operator()(const Uzel* l, const Uzel* r) const { return l->a < r->a; }
 };
+
+
 void Print(Uzel* root, unsigned k = 0) {
 	if (root != NULL) {
 		Print(root->left, k + 3);
@@ -38,6 +40,27 @@ void Print(Uzel* root, unsigned k = 0) {
 			cout << root->a << endl;
 			Print(root->right, k + 3);
 		}
+	}
+}
+vector<bool> code;
+map<char, vector<bool> > table;// таблица асооциирования кода с символом
+
+void Build(Uzel* root) {
+	if (root->left != NULL) // если слева что-то есть вносим в вектор 0
+	{
+		code.push_back(0);
+		Build(root->left); // рекурсивно вызываем функцию
+	}
+
+	if (root->right != NULL)// если справа что-то есть вносим в вектор 1
+	{
+		code.push_back(1);
+		Build(root->right);// рекурсивно вызываем функцию
+	}
+
+	if (root->left == NULL && root->right == NULL) {
+		table[root->c] = code;  // если наткнулись на букву, то ассоциируем её с годом в table
+		code.pop_back(); //сокращаем код на 1
 	}
 }
 
@@ -73,5 +96,14 @@ int main() {
 		da.push_back(parent); // добавляем его в list
 	}
 	Uzel* root = da.front(); // указатель на корень дерева
-	Print(root);
+	//Print(root);
+	Build(root);
+
+
+	for (int i = 0; i < s1.length(); i++) {
+		vector<bool> x = table[s1[i]];
+		for (int j = 0; j < x.size(); j++) {
+			cout << x[j];
+		}
+	}
 }
