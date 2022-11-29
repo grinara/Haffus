@@ -60,17 +60,22 @@ void Build(Uzel* root) {
 
 	if (root->left == NULL && root->right == NULL) {
 		table[root->c] = code;  // если наткнулись на букву, то ассоциируем её с годом в table
-		code.pop_back(); //сокращаем код на 1
+
+	}
+	if (!code.empty()) {
+		code.pop_back(); //сокращаем код на 1}
 	}
 }
 
 int main() {
 	setlocale(LC_ALL, "Russian");
-	string s1="Welcome to hell";
+	ifstream file1("11.txt", ios::out | ios::binary);
 	map<char, int>  m;
-	for (int ix = 0; ix < s1.length(); ix++) {
-		char c = s1[ix];
-		m[c]++;
+	while(!file1.eof()) { // побайтно считываем файл
+		char c = file1.get();
+		if (c != -1) {
+			m[c]++;
+		}
 	}
 
 	list<Uzel*> da;
@@ -99,11 +104,42 @@ int main() {
 	//Print(root);
 	Build(root);
 
+	file1.clear(); // сбрасываем указатель
+	file1.seekg(0);// возвращаем указатель в начало файла
 
-	for (int i = 0; i < s1.length(); i++) {
-		vector<bool> x = table[s1[i]];
-		for (int j = 0; j < x.size(); j++) {
-			cout << x[j];
+	ofstream file1_cip("output.txt", ios::out | ios::binary); // файл для записи
+
+	int count = 0; // счётчик
+	char buf = 0; //вспомогательная переменная
+	while(!file1.eof()) {
+		char c = file1.get();
+		if (c != -1) {
+			cout << c << endl;
+			vector<bool> x = table[c];
+			for (int j = 0; j < x.size(); j++) {
+				buf = buf | x[j] << (7 - count); // преобразуем вектор x в байт
+				count++;
+				if (count == 8 && buf != -1) { count = 0; file1_cip << buf; buf = 0; } // если достигли count = 8  байт записывем в file1_cip
+			}
 		}
 	}
+	file1.close(); // не забываем закрыть файл
+	file1_cip.close(); // не забываем закрыть файл
+	ifstream F("output.txt", ios::in | ios::binary);
+	Uzel* p = root;
+	count = 0;
+	char byte=0;
+	byte = F.get();
+
+	while (!F.eof())
+	{
+		bool b = byte & (1 << (7 - count)); // проверяем 1 или 0 в кодировке
+		if (b) p = p->right; else p = p->left; // если 1 двигаемся вправо иначе влево
+		if ((p->left == NULL) && (p->right == NULL)) { cout << p->c; p = root; } // выводим символ 
+		count++;
+		if (count == 8) { count = 0; byte = F.get(); } // если cout = 8 обнуляем его и рассматриваем следующий символ
+	}
+
+	F.close(); // не забываем закрыть файл
+	return 0;
 }
