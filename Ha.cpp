@@ -4,6 +4,7 @@
 #include <list>
 #include <fstream>
 #include <string>
+#include "Source.h"
 using namespace std;
 class Uzel {
 public:
@@ -71,11 +72,9 @@ int main() {
 	setlocale(LC_ALL, "Russian");
 	ifstream file1("11.txt", ios::out | ios::binary);
 	map<char, int>  m;
-	while(!file1.eof()) { // побайтно считываем файл
+	while(!file1.eof()) { //ищём количество вхождений каждого символа
 		char c = file1.get();
-		if (c != -1) {
 			m[c]++;
-		}
 	}
 
 	list<Uzel*> da;
@@ -101,7 +100,7 @@ int main() {
 		da.push_back(parent); // добавляем его в list
 	}
 	Uzel* root = da.front(); // указатель на корень дерева
-	//Print(root);
+	Print(root);
 	Build(root);
 
 	file1.clear(); // сбрасываем указатель
@@ -113,16 +112,14 @@ int main() {
 	char buf = 0; //вспомогательная переменная
 	while(!file1.eof()) {
 		char c = file1.get();
-		if (c != -1) {
-			cout << c << endl;
 			vector<bool> x = table[c];
 			for (int j = 0; j < x.size(); j++) {
 				buf = buf | x[j] << (7 - count); // преобразуем вектор x в байт
 				count++;
-				if (count == 8 && buf != -1) { count = 0; file1_cip << buf; buf = 0; } // если достигли count = 8  байт записывем в file1_cip
+				if (count == 8) { count = 0; file1_cip << buf; buf = 0; } // если достигли count = 8  байт записывем в file1_cip
 			}
-		}
 	}
+
 	file1.close(); // не забываем закрыть файл
 	file1_cip.close(); // не забываем закрыть файл
 	ifstream F("output.txt", ios::in | ios::binary);
@@ -130,7 +127,6 @@ int main() {
 	count = 0;
 	char byte=0;
 	byte = F.get();
-
 	while (!F.eof())
 	{
 		bool b = byte & (1 << (7 - count)); // проверяем 1 или 0 в кодировке
