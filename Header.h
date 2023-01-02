@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <vector>
 #include <map>
@@ -5,27 +6,44 @@
 #include <fstream>
 #include <string>
 #pragma
-#ifndef Uzel_H
-#define Uzel_H
+#ifndef Node_H
+#define Node_H
 using namespace std;
-class Uzel
+
+class Node
 {
 private:
-	
+
 public:
 	int a;
 	char c;
-	Uzel* left, * right;
-	Uzel() {
-		left = right = NULL;
+	Node* l, * r;
+	Node() {
+		l=NULL;
+		r = NULL;
 	}
-	Uzel(Uzel* L, Uzel* R)
+	Node(Node* L, Node* R)
 	{
-		left = L;
-		right = R;
+		l = L;
+		r = R;
 		a = L->a + R->a;
 	}
-#endif
 };
-void Print(Uzel* root, unsigned k);
-void main1();
+#endif
+
+struct himan {
+	char c = 0;
+	int count = 0;
+};
+struct t {
+	char c;
+	vector<bool> vec;
+};
+
+struct Sort
+{
+	bool operator()(Node* l, Node* r) const { return l->a < r->a; }
+};
+
+void coding();
+void decode();
